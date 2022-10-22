@@ -300,6 +300,15 @@ public class Jsoner{
 		return returnable;
 	}
 
+	public static ParseResult deserializeWrapped(final String input) throws JsonException {
+		Object result = deserialize(input);
+		if(result instanceof Jsonable) {
+			return new ParseResult((Jsonable) result);
+		} else {
+			throw new RuntimeException("Input is not applicable for wrapped navigation");
+		}
+	}
+
 	/** A convenience method that assumes a JsonArray must be deserialized.
 	 * @param deserializable representing content to be deserializable as a JsonArray.
 	 * @param defaultValue representing what would be returned if deserializable isn't a JsonArray or an IOException,

@@ -502,4 +502,16 @@ public class JsonerTest{
 		Jsoner.serializeCarelessly("ABCDEFGHIJKLMNOPQRSTUVWXYZ<>:{}abcdefghijklmnopqrstuvwxyz,.;'[]/`123456789-=~!@#$%^&*_+()\r\b\n\t\f\\К௪ၐᎺអὲ⍚❂⼒ぐ㋺ꁐꁚꑂ\u4e2d", serialized);
 		Assert.assertEquals("\"ABCDEFGHIJKLMNOPQRSTUVWXYZ<>:{}abcdefghijklmnopqrstuvwxyz,.;'[]/`123456789-=~!@#$%^&*_+()\\r\\b\\n\\t\\f\\\\К௪ၐᎺអὲ⍚❂⼒ぐ㋺ꁐꁚꑂ中\"", serialized.toString());
 	}
+
+	/** Ensures fast navigation's work
+	 * @throws JsonException if the test fails. */
+	@Test
+	public void testNavigatedSerialization() throws JsonException {
+		ParseResult result = Jsoner.deserializeWrapped("{\"first\": 123, \"second\": [{\"k1\":{\"id\":\"id1\"}}, 4, 5, 6, {\"id\": 123}], \"third\": 789, \"id\": null}");
+		Assert.assertEquals(result.get("first").asInt(), 123);
+		Assert.assertEquals(result.get("second").get(0).get("k1").get("id").asString(), "id1");
+		Assert.assertEquals(result.get("second").get(4).get("id").asInt(), 123);
+		Assert.assertEquals(result.get("second").get(1).asInt(), 4);
+		Assert.assertTrue(result.get("id").isNull());
+	}
 }
